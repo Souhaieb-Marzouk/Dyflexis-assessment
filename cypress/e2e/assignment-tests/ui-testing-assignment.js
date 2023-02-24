@@ -28,16 +28,10 @@ describe('UI Testing Assignment', function() {
         // Act
         cy.get('[href="/#/admin"]').click({force: true});
         // Assert
-        cy.xpath("//h2[text()='Log into your account']").should('have.text', 'Log into your account');
-        //cy.get("button[text()='Let me hack!']").click({force: true})
-        cy.get('[data-testid="username"]').should('be.visible');
-        //cy.wait('@username')
-        //cy.xpath("//input[@id='username']").type("admin").debug()
-        cy.get('input[id="username"]').click({force: true}).type('admin').should('have.value', 'admin')
-        cy.xpath('input[id="password"]').type('password');
-        cy.xpath('button[id="doLogin"]').click();
-
-
+        cy.xpath('//h2[text()="Log into your account"]').should('have.text', 'Log into your account');
+        cy.get('input[id="username"]').type('admin').should('have.value', 'admin')
+        cy.get('input[id="password"]').type('password').should('have.value', 'password')
+        cy.get('button[id="doLogin"]').click()
     });
 
     // // Negative test case
