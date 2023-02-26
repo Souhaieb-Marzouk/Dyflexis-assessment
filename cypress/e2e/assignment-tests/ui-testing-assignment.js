@@ -4,15 +4,18 @@ describe('UI Testing Assignment', function() {
   beforeEach(() => {
     cy.fixture('example.json').as('allData')
     cy.get('@allData').then((vars) => {
+      // Arrange
       cy.visit(vars.baseUrl)
-      cy.xpath(vars.letMeHackButton).click()
+      
     }) 
   });
 
   it('Verifies that the homepage loads successfully', () => {
-    // Assert
     cy.get('@allData').then((vars) => {
-      cy.get(vars.homePage).should('be.visible');
+      // Act
+      cy.xpath(vars.letMeHackButton).click()
+      // Assert
+      cy.get(vars.homePage).should('be.visible')
     })
   });
 
@@ -22,7 +25,7 @@ describe('UI Testing Assignment', function() {
       cy.xpath(vars.adminPanel).click();
 
       // Assert
-      cy.xpath(vars.adminPanelTitle).should('have.text', 'Log into your account');
+      cy.xpath(vars.adminPanelTitle).should('have.text', 'Log into your account')
     })
   });
 
@@ -96,7 +99,7 @@ describe('UI Testing Assignment', function() {
     })
   })
 
-  it.only('Verifies that an error message is displayed when the user submits an empty Contact Name', () => {
+  it('Verifies that an error message is displayed when the user submits an empty Contact Name', () => {
     cy.get('@allData').then((vars) => {
       // Act
       cy.fillContactForm(' ', vars.email, vars.phoneNumber, vars.subjectCF, vars.descriptionCF)
