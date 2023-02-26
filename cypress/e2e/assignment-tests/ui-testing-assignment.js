@@ -1,91 +1,108 @@
 /// <reference types="Cypress" />
-//const requiredExample = require('../../fixtures/example.json');
 
 describe('UI Testing Assignment', function() {
-
-    beforeEach(() => {
-        // Arrange
-        cy.fixture('example.json').then((example) => {
-            cy.visit('https://automationintesting.online/');
-            //cy.visit(example.baseUrl);
-            cy.xpath("//button[text()='Let me hack!']").click();
-        });
-    });
-    
-    it('Verifies that the homepage loads successfully', () => {
-        // Assert
-        cy.get('#root').should('be.visible');
-    });
-
-    it('Check of the Admin Panel', () => {
-        // Act
-        cy.xpath('//a[text()="Admin panel"]').click();
-        // Assert
-        cy.xpath("//h2[text()='Log into your account']").should('have.text', 'Log into your account');
-    });
-
-    it('Check if the login is done successfully', () => {
-        // Act
-        cy.get('[href="/#/admin"]').click({force: true});
-        // Assert
-        cy.xpath('//h2[text()="Log into your account"]').should('have.text', 'Log into your account');
-        cy.get('input[id="username"]').type('admin').should('have.value', 'admin')
-        cy.get('input[id="password"]').type('password').should('have.value', 'password')
-        cy.get('button[id="doLogin"]').click()
-    });
-
-    // Negative test case
-    it('Verifies that the user cannot book the displayed room', () => {
-        cy.fixture('example.json').then((example) => {
-            // Act
-            cy.contains('Book this room').click()
-            cy.get('.room-booking-form > .form-control').type(example.firstName)
-            cy.get('.col-sm-4 > :nth-child(2) > .form-control').type(example.lastName)
-            cy.get('.col-sm-4 > :nth-child(3) > .form-control').type(example.email)
-            cy.get('.col-sm-4 > :nth-child(4) > .form-control').type(example.phoneNumber)
-            cy.get('.rbc-btn-group').contains('Next').click()
-            cy.get('.rbc-date-cell').contains('23').click()
-            cy.get('.book-room').contains('Book').click()
-
-            // Assert
-            cy.get('.alert > :nth-child(1)').should('have.text', 'must not be null')
-        });
-    });
-
-    // Negative test case
-    it('Should be able to submit the contact form with correct details and receive a confirmation message', () => {
-        cy.get('[data-testid="ContactName"]').type('First Name')
-        cy.get('[data-testid="ContactEmail"]').type('fake@fakeemail.com')
-        cy.get('[data-testid="ContactPhone"]').type('012345678901')
-        cy.get('[data-testid="ContactSubject"]').type('Booking issue')
-        cy.get('[data-testid="ContactDescription"]').type('I recently made a booking through your website. Unfortunately, I have encountered an issue with my booking and I would like to bring it to your attention.')
-        cy.get('#submitContact').click()
-
-        // Assert
-        cy.get(':nth-child(2) > div > h2').should('have.text', 'Thanks for getting in touch First Name!')
-    });
-
-    it('Should not be able to submit the contact form with incorrect/incomplete details and receive an error message', () => {
-        //cy.get('[data-testid="ContactName"]').type('First Name')
-        cy.get('[data-testid="ContactEmail"]').type('fake@fakeemail.com')
-        cy.get('[data-testid="ContactPhone"]').type('012345678901')
-        cy.get('[data-testid="ContactSubject"]').type('Booking issue')
-        cy.get('[data-testid="ContactDescription"]').type('I recently made a booking through your website. Unfortunately, I have encountered an issue with my booking and I would like to bring it to your attention.')
-        cy.get('#submitContact').click()
-
-        // Assert
-        cy.get('.alert').should('have.text', 'Name may not be blank')
-    });
-
-    it('Verifies that an error message is displayed when the user submits an empty Contact Name', () => {
-        //cy.get('[data-testid="ContactName"]').type('First Name')
-        cy.get('[data-testid="ContactEmail"]').type('fake@fakeemail.com')
-        cy.get('[data-testid="ContactPhone"]').type('012345678901')
-        cy.get('[data-testid="ContactSubject"]').type('Booking issue')
-        cy.get('[data-testid="ContactDescription"]').type('I recently made a booking through your website. Unfortunately, I have encountered an issue with my booking and I would like to bring it to your attention.')
-        cy.get('#submitContact').click()
-
-        // Assert
-        cy.get('.alert').should('be.visible')
-    });
+  beforeEach(() => {
+    cy.fixture('example.json').as('allData')
+    cy.get('@allData').then((vars) => {
+      cy.visit(vars.baseUrl)
+      cy.xpath(vars.letMeHackButton).click()
+    }) 
   });
+
+  it('Verifies that the homepage loads successfully', () => {
+    // Assert
+    cy.get('@allData').then((vars) => {
+      cy.get(vars.homePage).should('be.visible');
+    })
+  });
+
+  it('Check of the Admin Panel', () => {
+    cy.get('@allData').then((vars) => {
+      // Act
+      cy.xpath(vars.adminPanel).click();
+
+      // Assert
+      cy.xpath(vars.adminPanelTitle).should('have.text', 'Log into your account');
+    })
+  });
+
+  it('Check if the login is done successfully', () => {
+    cy.get('@allData').then((vars) => {
+      // Act
+      cy.loginAdminPanel(vars.AdminPanelUsername, vars.AdminPanelPassword)
+
+      // Assert
+        
+    })
+  });
+
+  it('Add another accessible room', () => {
+    cy.get('@allData').then((vars) => {
+      // Act
+      cy.addARoom(vars.roomNumber, vars.roomType, vars.roomAccessibility, vars.roomPrice, vars.optionViews, vars.optionRefresh, vars.optionTV)
+
+      // Assert
+        
+    })
+  });
+
+  it('Verify that the user cannot book a room if the date is not selected', () => {
+    cy.get('@allData').then((vars) => {
+      // Act
+      cy.get(vars.bookRoomButton).click()
+      cy.get(vars.firstNameField).type(vars.firstName)
+      cy.get(vars.lastNameField).type(vars.lastName)
+      cy.get(vars.emailField).type(vars.email)
+      cy.get(vars.phoneNumberField).type(vars.phoneNumber)
+      cy.get(vars.specificDate).contains(vars.selectedDate).click()
+      cy.get(vars.bookButton).contains(vars.bookButtonName).click()
+
+      // Assert
+      cy.get(vars.bookError).find('p').should('have.text', vars.bookErrorMessage)
+    })
+  });
+
+  it('Should be able to submit the contact form with correct details and receive a confirmation message', () => {
+    cy.get('@allData').then((vars) => {
+      // Act
+      cy.fillContactForm(vars.firstName, vars.email, vars.phoneNumber, vars.subjectCF, vars.descriptionCF)
+
+      // Assert
+      cy.xpath(vars.successCFSubmission).should('have.text', vars.successCFSubmissionText + vars.firstName + '!')
+    })
+  });
+
+  it('Verify if the submit form is sent correctly', () => {
+    cy.get('@allData').then((vars) => {
+      // Act
+      cy.loginAdminPanel(vars.AdminPanelUsername, vars.AdminPanelPassword)
+      cy.get(vars.notificationSelector).click()
+
+      // Assert
+      cy.get(vars.allMessagesSelector).should('be.visible')
+
+      // Act
+      cy.get(vars.allMessagesTable).each((nessage) => {
+        cy.wrap(nessage).then(($label) => {
+          const label = $label.text()
+          if (vars.firstName.includes(label)) {
+            cy.wrap(nessage).click({force: true})
+          }
+        })
+      })
+
+      // Assert
+      cy.get(vars.messageTitle).should('have.text', 'From: '+vars.firstName)
+    })
+  })
+
+  it.only('Verifies that an error message is displayed when the user submits an empty Contact Name', () => {
+    cy.get('@allData').then((vars) => {
+      // Act
+      cy.fillContactForm(' ', vars.email, vars.phoneNumber, vars.subjectCF, vars.descriptionCF)
+
+      // Assert
+      cy.get(vars.contactFormAlert).should('be.visible')
+    })
+  });
+});
