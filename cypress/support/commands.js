@@ -49,30 +49,36 @@ Cypress.on('uncaught:exception', (err, runnable, promise) => {
 })
 
 Cypress.Commands.add('loginAdminPanel', (username, password) => {
-  cy.xpath("//a[text()='Admin panel']").click()
-  cy.xpath('//h2[text()="Log into your account"]').should('have.text', 'Log into your account')
-  cy.get('input[id="username"]').focus().type(username)
-  cy.get('input[id="password"]').focus().type(password)
-  cy.get('button[id="doLogin"]').click()
+  cy.get('@allData').then((vars) => {
+    cy.xpath(vars.adminPanel).click()
+    cy.xpath(vars.adminPanelTitle).should('have.text', 'Log into your account')
+    cy.get(vars.usernameSelector).focus().type(username)
+    cy.get(vars.passwordSelector).focus().type(password)
+    cy.get(vars.buttonSelector).click()
+  })
 })
 
-Cypress.Commands.add('addARoom', (roomName, roomType, accessiblity, roomPrice, optionWifi, optionTV, optionRadio, optionRefresh, optionSafe, optionViews) => {
-  cy.loginAdminPanel('admin', 'password')
-  cy.get('#roomName').focus().type(roomName)
-  cy.xpath('//select[@id="type"]').select(roomType)
-  cy.xpath('//select[@id="accessible"]').select(accessiblity)
-  cy.get('#roomPrice').type(roomPrice)
-  cy.selectCheckboxes([optionWifi, optionTV, optionRadio, optionRefresh, optionSafe, optionViews])
-  cy.get('#createRoom').click()
+Cypress.Commands.add('addARoom', (optionWifi, optionTV, optionRadio, optionRefresh, optionSafe, optionViews) => {
+  cy.get('@allData').then((vars) => {
+    cy.loginAdminPanel(vars.AdminPanelUsername, vars.AdminPanelPassword)
+    cy.get(vars.roomNumberSelector).focus().type(vars.roomNumber)
+    cy.xpath(vars.roomTypeSelector).select(vars.roomType)
+    cy.xpath(vars.roomAccessibilitySelector).select(vars.roomAccessibility)
+    cy.get(vars.roomPriceSelector).type(vars.roomPrice)
+    cy.selectCheckboxes([optionWifi, optionTV, optionRadio, optionRefresh, optionSafe, optionViews])
+    cy.get(vars.createRoomButton).click()
+  })
 })
 
 Cypress.Commands.add('selectCheckboxes', (checkboxNames) => {
-  cy.get('input[type="checkbox"]').each((checkbox) => {
-    cy.wrap(checkbox).siblings('label').then(($label) => {
-      const label = $label.text()
-      if (checkboxNames.includes(label)) {
-        cy.wrap(checkbox).check()
-      }
+  cy.get('@allData').then((vars) => {
+    cy.get(vars.allCheckboxesSelectors).each((checkbox) => {
+      cy.wrap(checkbox).siblings('label').then(($label) => {
+        const label = $label.text()
+        if (checkboxNames.includes(label)) {
+          cy.wrap(checkbox).check()
+        }
+      })
     })
   })
 })
@@ -86,4 +92,25 @@ Cypress.Commands.add('fillContactForm', (firstName, email, phone, subject, descr
     cy.get(vars.contactFormDescription).type(description)
     cy.get(vars.contactFormButton).click()
   })
+})
+
+Cypress.Commands.add('BookingModification', (methodName, bookingId, token) => {
+  cy.request({
+    method: +methodName,
+    url: 'https://restful-booker.herokuapp.com/booking/'+bookingId,
+    headers: {
+      'Authorization': 'Basic YWRtaW46cGFzc3dvcmQxMjM=',
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Cookie': 'token='+token
+    },
+    body: {
+      firstName: 'Test10',
+      lastName: 'API10',
+      depositPaid: false
+    }
+  }).then((response) => {
+    expect(response.status).to.eq(200);
+    expect(response.body).to.have.property('bookingid', bookingId);
+  });
 })

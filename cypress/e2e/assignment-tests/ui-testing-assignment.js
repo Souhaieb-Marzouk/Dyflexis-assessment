@@ -42,7 +42,7 @@ describe('UI Testing Assignment', function() {
   it('Add another accessible room', () => {
     cy.get('@allData').then((vars) => {
       // Act
-      cy.addARoom(vars.roomNumber, vars.roomType, vars.roomAccessibility, vars.roomPrice, vars.optionViews, vars.optionRefresh, vars.optionTV)
+      cy.addARoom(vars.optionViews, vars.optionRefresh, vars.optionTV)
 
       // Assert
         
