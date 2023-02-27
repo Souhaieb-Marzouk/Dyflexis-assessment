@@ -2,7 +2,7 @@
 
 describe('UI Testing Assignment', function() {
   beforeEach(() => {
-    cy.fixture('example.json').as('allData')
+    cy.fixture('ui-testing.json').as('allData')
     cy.get('@allData').then((vars) => {
       // Arrange
       cy.visit(vars.baseUrl)
