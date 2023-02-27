@@ -54,5 +54,6 @@
     "allCheckboxesSelectors": "input[type='checkbox']",
     "usernameSelector": "input[id='username']",
     "passwordSelector": "input[id='password']",
-    "buttonSelector": "button[id='doLogin']"
+    "buttonSelector": "button[id='doLogin']",
+    "allRemoveButtons": "span[class='fa fa-remove roomDelete']"
 }

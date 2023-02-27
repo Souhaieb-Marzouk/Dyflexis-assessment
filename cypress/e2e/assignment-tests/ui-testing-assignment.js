@@ -39,13 +39,13 @@ describe('UI Testing Assignment', function() {
     })
   });
 
-  it('Add another accessible room', () => {
+  it.only('Add another accessible room', () => {
     cy.get('@allData').then((vars) => {
       // Act
       cy.addARoom(vars.optionViews, vars.optionRefresh, vars.optionTV)
 
       // Assert
-        
+      cy.get(vars.allRemoveButtons).should('have.length', vars.selectorsNumber+1)
     })
   });
 

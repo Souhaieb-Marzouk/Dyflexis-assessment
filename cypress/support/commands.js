@@ -61,6 +61,10 @@ Cypress.Commands.add('loginAdminPanel', (username, password) => {
 Cypress.Commands.add('addARoom', (optionWifi, optionTV, optionRadio, optionRefresh, optionSafe, optionViews) => {
   cy.get('@allData').then((vars) => {
     cy.loginAdminPanel(vars.AdminPanelUsername, vars.AdminPanelPassword)
+    cy.get(vars.allRemoveButtons).its('length').then((length) => {
+      cy.writeFile('cypress/fixtures/other.json', { "selectorsNumber": length });
+    });
+    cy.log(vars.selectorsNumber)
     cy.get(vars.roomNumberSelector).focus().type(vars.roomNumber)
     cy.xpath(vars.roomTypeSelector).select(vars.roomType)
     cy.xpath(vars.roomAccessibilitySelector).select(vars.roomAccessibility)
