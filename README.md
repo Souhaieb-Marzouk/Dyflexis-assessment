@@ -1,9 +1,9 @@
 # Dyflexis-assessment
 ## Assessment Description:
 ### UI Testing Assignment:
-   - The purpose is to develop some test scripts to cover the different functionalities of the website.
+   - The purpose is to develop some test scripts to cover the different functionalities of the following website: [Automation Testing](https://automationintesting.online/)
 ### API Testing Assignment:
-   - The purpose is to develop some test scripts to cover the different methods interacting with the API.
+   - The purpose is to develop some test scripts to cover the different methods interacting with the following API: [Restful Booker](https://restful-booker.herokuapp.com/apidoc/index.html)
 
 ## Installation:
 - This project was developped using Visual Studio.
