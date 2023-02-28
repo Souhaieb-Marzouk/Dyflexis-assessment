@@ -4,137 +4,116 @@ describe('UI Testing Assignment', function() {
     let returnedResponse;
     let bookingId;
     
-    beforeEach(() => {
-        cy.request('https://restful-booker.herokuapp.com/booking')
-    })
-    
     // Create a token
     it('Create a token', () => {
         cy.fixture('api-testing.json').then(commonRequest => {
             cy.request({
-                method: 'POST',
-                url: 'https://restful-booker.herokuapp.com/auth',
+                method: commonRequest.tokenMethod,
+                url: commonRequest.tokenURL,
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': commonRequest.commonHeaders.ContentType,
                 },
-                body: {
-                    username: 'admin',
-                    password: 'password123'
-                }
+                body: commonRequest.tokenHeader.body
             }).then((response) => {
                 returnedResponse = response.body.token;
-                expect(response.status).to.eq(200);
-                cy.log(returnedResponse)
+                expect(response.status).to.eq(commonRequest.tokenResponse);
             });
         })
     });
 
     // Get bookings
     it('Get bookings', () => {
-        cy.request({
-            method: 'GET',
-            url: 'https://restful-booker.herokuapp.com/booking',
-            headers: {
-                'Authorization': 'Bearer ' + returnedResponse,
-                'Content-Type': 'application/json'
-            }
-        }).then((response) => {
-            expect(response.status).to.eq(200);
-            expect(response.body).to.be.an('array');
-        });
+        cy.fixture('api-testing.json').then(commonRequest => {
+            cy.request({
+                method: commonRequest.getBookingMethod,
+                url: commonRequest.BookingURL,
+                headers: {
+                    'Authorization': 'Bearer ' + returnedResponse,
+                    'Content-Type': commonRequest.commonHeaders.ContentType,
+                }
+            }).then((response) => {
+                expect(response.status).to.eq(commonRequest.getBookingResponse.code);
+                expect(response.body).to.be.an(commonRequest.getBookingResponse.type);
+            });
+        })
     });
     
 
     // Create a booking
     it('Create a booking', () => {
-        cy.request({
-            method: 'POST',
-            url: 'https://restful-booker.herokuapp.com/booking',
-            headers: {
-                'Authorization': 'Bearer ' + returnedResponse,
-                'Content-Type': 'application/json'
-            },
-            body: {
-                firstname: 'Test',
-                lastname: 'API',
-                totalprice: 100,
-                depositpaid: true,
-                bookingdates: {
-                    checkin: '2020-10-20',
-                    checkout: '2020-11-10'
+        cy.fixture('api-testing.json').then(commonRequest => {
+            cy.request({
+                method: commonRequest.createBookingMethod,
+                url: commonRequest.BookingURL,
+                headers: {
+                    'Authorization': 'Bearer ' + returnedResponse,
+                    'Content-Type': commonRequest.commonHeaders.ContentType,
                 },
-                additionalneeds: 'None'
-            }
-        }).then((response) => {
-            bookingId = response.body.bookingid;
-            expect(response.status).to.eq(200);
-            expect(response.body).to.have.property('bookingid');
-            cy.log(bookingId)
-            cy.log(returnedResponse)
-            cy.log(response)
-        });
+                body: commonRequest.createBookingHeader.body
+            }).then((response) => {
+                bookingId = response.body.bookingid;
+                expect(response.status).to.eq(commonRequest.createBookingResponse);
+                expect(response.body).to.have.property('bookingid');
+            });
+        })
     });
     
     
     // Update a booking
     it('Update a booking', () => {
-        cy.request({
-            method: 'PUT',
-            url: 'https://restful-booker.herokuapp.com/booking/'+bookingId,
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Cookie': 'token=' + returnedResponse
-            },
-            body: {
-                firstname: 'Test',
-                lastname: 'API',
-                totalprice: 100,
-                depositpaid: false,
-                bookingdates: {
-                    checkin: '2020-10-20',
-                    checkout: '2020-11-10'
+        cy.fixture('api-testing.json').then(commonRequest => {
+            cy.request({
+                method: commonRequest.updateMethod,
+                url: commonRequest.BookingURL+bookingId,
+                headers: {
+                    'Content-Type': commonRequest.commonHeaders.ContentType,
+                    'Accept': commonRequest.commonHeaders.Accept,
+                    'Cookie': 'token=' + returnedResponse
                 },
-                additionalneeds: 'None'
-            }
-        }).then((response) => {
-            expect(response.status).to.eq(200);
-            cy.log(response.body.depositpaid)
-            expect(response.body).to.have.property('depositpaid', false);
-        });
+                body: commonRequest.updateHeader.body
+            }).then((response) => {
+                expect(response.status).to.eq(commonRequest.updateResponse.code);
+                expect(response.body).to.have.property('depositpaid', commonRequest.updateResponse.depositpaid);
+                expect(response.body).to.have.property('totalprice', commonRequest.updateResponse.totalprice);
+            });
+        })
     });
     
     // Partially update bookings
     it('Partially update bookings', () => {
-        cy.request({
-            method: 'PATCH',
-            url: 'https://restful-booker.herokuapp.com/booking/'+bookingId,
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Cookie': 'token=' + returnedResponse
-            },
-            body: {
-                firstname: 'Test10',
-                lastname: 'API10'
-            }
-        }).then((response) => {
-            expect(response.status).to.eq(200);
-            expect(response.body).to.have.property('lastname', 'API10');
-        });
+        cy.fixture('api-testing.json').then(commonRequest => {
+            cy.request({
+                method: commonRequest.partialUpdateMethod,
+                url: commonRequest.BookingURL+bookingId,
+                headers: {
+                    'Content-Type': commonRequest.commonHeaders.ContentType,
+                    'Accept': commonRequest.commonHeaders.Accept,
+                    'Cookie': 'token=' + returnedResponse
+                },
+                body: {
+                    firstname: 'Test10',
+                    lastname: 'API10'
+                }
+            }).then((response) => {
+                expect(response.status).to.eq(commonRequest.partialUpdateResponse.code);
+                expect(response.body).to.have.property('lastname', commonRequest.partialUpdateResponse.lastname);
+            });
+        })
     });
     
     // Delete a booking
     it('Delete a booking', () => {
-        cy.request({
-            method: 'DELETE',
-            url: 'https://restful-booker.herokuapp.com/booking/'+bookingId,
-            headers: {
-                'Content-Type': 'application/json',
-                'Cookie': 'token=' + returnedResponse
-            }
-        }).then((response) => {
-            expect(response.status).to.eq(201);
-        });
+        cy.fixture('api-testing.json').then(commonRequest => {
+            cy.request({
+                method: commonRequest.DeleteMethod,
+                url: commonRequest.BookingURL+bookingId,
+                headers: {
+                    'Content-Type': commonRequest.commonHeaders.ContentType,
+                    'Cookie': 'token=' + returnedResponse
+                }
+            }).then((response) => {
+                expect(response.status).to.eq(commonRequest.DeleteResponse);
+            });
+        })
     });
 });

@@ -1,36 +1,86 @@
 {
-    "Request": {
-      "headers": {
-        "Content-Type": "application/json"
-      },
+    "tokenURL": "https://restful-booker.herokuapp.com/auth",
+    "BookingURL": "https://restful-booker.herokuapp.com/booking/",
+    "commonHeaders": {
+        "ContentType": "application/json",
+        "Accept": "application/json"
+    },
+
+    
+    "tokenMethod": "POST",
+    "tokenHeader": {
       "body": {
         "username": "admin",
         "password": "password123"
       }
     },
-    "response": {
-      "status": 200,
-      "body": {
-        "message": "Success"
-      }
+    "tokenResponse": 200,
+
+
+    "getBookingMethod": "GET",
+    "getBookingResponse": {
+        "code":200,
+        "type":"array"
     },
-    "updateRequest": {
-        "body": {
-          "firstname": "Test",
-          "lastname": "API",
-          "totalprice": 100,
-          "depositpaid": false,
-          "bookingdates": {
+
+
+    "createBookingMethod": "POST",
+    "createBookingHeader": {
+      "body": {
+        "firstname": "Test",
+        "lastname": "API",
+        "totalprice": 100,
+        "depositpaid": true,
+        "bookingdates": {
             "checkin": "2020-10-20",
             "checkout": "2020-11-10"
-          },
-          "additionalneeds": "None"
-        }
+        },
+        "additionalneeds": "None"
+      }
     },
-    "partialUpdateRequest": {
-        "body": {
-          "firstname": "Test10",
-          "lastname": "API10"
-        }
-    }
+    "createBookingResponse": 200,
+
+
+    "updateMethod": "PUT",
+    "updateHeader": {
+      "body": {
+        "firstname": "Test",
+        "lastname": "API",
+        "totalprice": 200,
+        "depositpaid": false,
+        "bookingdates": {
+            "checkin": "2020-10-20",
+            "checkout": "2020-11-10"
+        },
+        "additionalneeds": "None"
+      }
+    },
+    "updateResponse": {
+        "code": 200,
+        "depositpaid": false,
+        "totalprice": 200
+    },
+
+
+    "partialUpdateMethod": "PATCH",
+    "partialUpdateHeader": {
+      "body": {
+        "username": "admin",
+        "password": "password123"
+      }
+    },
+    "partialUpdateResponse": {
+        "code": 200,
+        "lastname": "API10"
+    },
+
+
+    "DeleteMethod": "DELETE",
+    "DeleteHeader": {
+      "body": {
+        "username": "admin",
+        "password": "password123"
+      }
+    },
+    "DeleteResponse": 201
 }
