@@ -23,7 +23,7 @@
     "bookErrorMessage": "must not be nullmust not be null",
     "bookError": ".alert",
     "roomNumberSelector": "#roomName",
-    "roomNumber": "200",
+    "roomNumber": "500",
     "roomTypeSelector": "//select[@id='type']",
     "roomType": "Double",
     "roomAccessibilitySelector": "//select[@id='accessible']",
@@ -55,5 +55,6 @@
     "usernameSelector": "input[id='username']",
     "passwordSelector": "input[id='password']",
     "buttonSelector": "button[id='doLogin']",
-    "allRemoveButtons": "span[class='fa fa-remove roomDelete']"
+    "allRemoveButtons": "span[class='fa fa-remove roomDelete']",
+    "adminPanelContainer": "div[class='container']"
 }

@@ -1,28 +1,32 @@
 /// <reference types="Cypress" />
 
 describe('UI Testing Assignment', function() {
-
-    // beforeEach(() => {
-    //     cy.request('https://restful-booker.herokuapp.com/booking')
-    // })
-
+    let returnedResponse;
+    let bookingId;
+    
+    beforeEach(() => {
+        cy.request('https://restful-booker.herokuapp.com/booking')
+    })
+    
     // Create a token
     it('Create a token', () => {
-        cy.request({
-            method: 'POST',
-            url: 'https://restful-booker.herokuapp.com/auth',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: {
-                username: 'adminUser',
-                password: 'password123'
-            }
-        }).then((response) => {
-            window.token = response.body.token;
-            cy.wrap(response.body.token).as('token');
-            cy.log(response.body.token)
-        });
+        cy.fixture('api-testing.json').then(commonRequest => {
+            cy.request({
+                method: 'POST',
+                url: 'https://restful-booker.herokuapp.com/auth',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: {
+                    username: 'admin',
+                    password: 'password123'
+                }
+            }).then((response) => {
+                returnedResponse = response.body.token;
+                expect(response.status).to.eq(200);
+                cy.log(returnedResponse)
+            });
+        })
     });
 
     // Get bookings
@@ -31,13 +35,12 @@ describe('UI Testing Assignment', function() {
             method: 'GET',
             url: 'https://restful-booker.herokuapp.com/booking',
             headers: {
-                'Authorization': 'Bearer ' + window.token,
+                'Authorization': 'Bearer ' + returnedResponse,
                 'Content-Type': 'application/json'
             }
         }).then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body).to.be.an('array');
-            cy.log(response.body)
         });
     });
     
@@ -48,7 +51,7 @@ describe('UI Testing Assignment', function() {
             method: 'POST',
             url: 'https://restful-booker.herokuapp.com/booking',
             headers: {
-                'Authorization': 'Bearer ' + window.token,
+                'Authorization': 'Bearer ' + returnedResponse,
                 'Content-Type': 'application/json'
             },
             body: {
@@ -63,27 +66,75 @@ describe('UI Testing Assignment', function() {
                 additionalneeds: 'None'
             }
         }).then((response) => {
-            window.bookingId = response.body.bookingid;
+            bookingId = response.body.bookingid;
             expect(response.status).to.eq(200);
             expect(response.body).to.have.property('bookingid');
-            cy.log(window.bookingId)
-            cy.log(window.token)
+            cy.log(bookingId)
+            cy.log(returnedResponse)
+            cy.log(response)
         });
     });
     
     
     // Update a booking
     it('Update a booking', () => {
-        cy.BookingModification("PUT", window.bookingId, window.token)
+        cy.request({
+            method: 'PUT',
+            url: 'https://restful-booker.herokuapp.com/booking/'+bookingId,
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Cookie': 'token=' + returnedResponse
+            },
+            body: {
+                firstname: 'Test',
+                lastname: 'API',
+                totalprice: 100,
+                depositpaid: false,
+                bookingdates: {
+                    checkin: '2020-10-20',
+                    checkout: '2020-11-10'
+                },
+                additionalneeds: 'None'
+            }
+        }).then((response) => {
+            expect(response.status).to.eq(200);
+            cy.log(response.body.depositpaid)
+            expect(response.body).to.have.property('depositpaid', false);
+        });
     });
     
     // Partially update bookings
     it('Partially update bookings', () => {
-        cy.BookingModification('PATCH', window.bookingId, window.token)
+        cy.request({
+            method: 'PATCH',
+            url: 'https://restful-booker.herokuapp.com/booking/'+bookingId,
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Cookie': 'token=' + returnedResponse
+            },
+            body: {
+                firstname: 'Test10',
+                lastname: 'API10'
+            }
+        }).then((response) => {
+            expect(response.status).to.eq(200);
+            expect(response.body).to.have.property('lastname', 'API10');
+        });
     });
     
     // Delete a booking
     it('Delete a booking', () => {
-        cy.BookingModification('DELETE', window.bookingId, window.token)
+        cy.request({
+            method: 'DELETE',
+            url: 'https://restful-booker.herokuapp.com/booking/'+bookingId,
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': 'token=' + returnedResponse
+            }
+        }).then((response) => {
+            expect(response.status).to.eq(201);
+        });
     });
 });

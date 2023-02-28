@@ -58,12 +58,21 @@ Cypress.Commands.add('loginAdminPanel', (username, password) => {
   })
 })
 
+Cypress.Commands.add('bookingARoom', (firstName, lastName, email, phoneNumber, selectedDate, bookButtonName) => {
+  cy.get('@allData').then((vars) => {
+    cy.get(vars.bookRoomButton).click()
+    cy.get(vars.firstNameField).type(firstName)
+    cy.get(vars.lastNameField).type(lastName)
+    cy.get(vars.emailField).type(email)
+    cy.get(vars.phoneNumberField).type(phoneNumber)
+    cy.get(vars.specificDate).contains(selectedDate).click()
+    cy.get(vars.bookButton).contains(bookButtonName).click()
+  })
+})
+
 Cypress.Commands.add('addARoom', (optionWifi, optionTV, optionRadio, optionRefresh, optionSafe, optionViews) => {
   cy.get('@allData').then((vars) => {
     cy.loginAdminPanel(vars.AdminPanelUsername, vars.AdminPanelPassword)
-    cy.get(vars.allRemoveButtons).its('length').then((length) => {
-      cy.writeFile('cypress/fixtures/other.json', { "selectorsNumber": length });
-    });
     cy.log(vars.selectorsNumber)
     cy.get(vars.roomNumberSelector).focus().type(vars.roomNumber)
     cy.xpath(vars.roomTypeSelector).select(vars.roomType)
@@ -97,24 +106,17 @@ Cypress.Commands.add('fillContactForm', (firstName, email, phone, subject, descr
     cy.get(vars.contactFormButton).click()
   })
 })
-
-Cypress.Commands.add('BookingModification', (methodName, bookingId, token) => {
-  cy.request({
-    method: +methodName,
-    url: 'https://restful-booker.herokuapp.com/booking/'+bookingId,
-    headers: {
-      'Authorization': 'Basic YWRtaW46cGFzc3dvcmQxMjM=',
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Cookie': 'token='+token
-    },
-    body: {
-      firstName: 'Test10',
-      lastName: 'API10',
-      depositPaid: false
-    }
-  }).then((response) => {
-    expect(response.status).to.eq(200);
-    expect(response.body).to.have.property('bookingid', bookingId);
-  });
-})
+let response
+Cypress.Commands.add('commonRequest', (methodName, link) => {
+  cy.fixture('api-testing.json').then(commonRequest => {
+    cy.request({
+      method: methodName,
+      url: link,
+      headers: commonRequest.request.headers,
+      body: commonRequest.request.body
+    }).then((res) => {
+      cy.wrap(res).as('response')
+        //windows.response = res
+    });
+  })
+});

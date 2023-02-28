@@ -6,7 +6,6 @@ describe('UI Testing Assignment', function() {
     cy.get('@allData').then((vars) => {
       // Arrange
       cy.visit(vars.baseUrl)
-      
     }) 
   });
 
@@ -14,6 +13,7 @@ describe('UI Testing Assignment', function() {
     cy.get('@allData').then((vars) => {
       // Act
       cy.xpath(vars.letMeHackButton).click()
+
       // Assert
       cy.get(vars.homePage).should('be.visible')
     })
@@ -35,30 +35,24 @@ describe('UI Testing Assignment', function() {
       cy.loginAdminPanel(vars.AdminPanelUsername, vars.AdminPanelPassword)
 
       // Assert
-        
+      cy.get(vars.adminPanelContainer).eq(1).should('be.visible')
     })
   });
 
-  it.only('Add another accessible room', () => {
+  it('Add another accessible room', () => {
     cy.get('@allData').then((vars) => {
       // Act
       cy.addARoom(vars.optionViews, vars.optionRefresh, vars.optionTV)
-
+      
       // Assert
-      cy.get(vars.allRemoveButtons).should('have.length', vars.selectorsNumber+1)
+      cy.get(vars.roomNumberSelector+vars.roomNumber).should('be.visible')
     })
   });
 
   it('Verify that the user cannot book a room if the date is not selected', () => {
     cy.get('@allData').then((vars) => {
       // Act
-      cy.get(vars.bookRoomButton).click()
-      cy.get(vars.firstNameField).type(vars.firstName)
-      cy.get(vars.lastNameField).type(vars.lastName)
-      cy.get(vars.emailField).type(vars.email)
-      cy.get(vars.phoneNumberField).type(vars.phoneNumber)
-      cy.get(vars.specificDate).contains(vars.selectedDate).click()
-      cy.get(vars.bookButton).contains(vars.bookButtonName).click()
+      cy.bookingARoom(vars.firstName, vars.lastName, vars.email, vars.phoneNumber, vars.selectedDate, vars.bookButtonName)
 
       // Assert
       cy.get(vars.bookError).find('p').should('have.text', vars.bookErrorMessage)

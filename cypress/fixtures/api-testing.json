@@ -1,0 +1,36 @@
+{
+    "Request": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "admin",
+        "password": "password123"
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "message": "Success"
+      }
+    },
+    "updateRequest": {
+        "body": {
+          "firstname": "Test",
+          "lastname": "API",
+          "totalprice": 100,
+          "depositpaid": false,
+          "bookingdates": {
+            "checkin": "2020-10-20",
+            "checkout": "2020-11-10"
+          },
+          "additionalneeds": "None"
+        }
+    },
+    "partialUpdateRequest": {
+        "body": {
+          "firstname": "Test10",
+          "lastname": "API10"
+        }
+    }
+}
