@@ -28,25 +28,25 @@ Cypress.on('uncaught:exception', (err, runnable) => {
     // failing the test
     return false
 })
-Cypress.on('uncaught:exception', (err, runnable) => {
-    // we expect a 3rd party library error with message 'list not defined'
-    // and don't want to fail the test so we return false
-    if (err.message.includes('list not defined')) {
-      return false
-    }
-    // we still want to ensure there are no other unexpected
-    // errors, so we let them fail the test
-})
-Cypress.on('uncaught:exception', (err, runnable, promise) => {
-    // when the exception originated from an unhandled promise
-    // rejection, the promise is provided as a third argument
-    // you can turn off failing the test in this case
-    if (promise) {
-      return false
-    }
-    // we still want to ensure there are no other unexpected
-    // errors, so we let them fail the test
-})
+// Cypress.on('uncaught:exception', (err, runnable) => {
+//     // we expect a 3rd party library error with message 'list not defined'
+//     // and don't want to fail the test so we return false
+//     if (err.message.includes('list not defined')) {
+//       return false
+//     }
+//     // we still want to ensure there are no other unexpected
+//     // errors, so we let them fail the test
+// })
+// Cypress.on('uncaught:exception', (err, runnable, promise) => {
+//     // when the exception originated from an unhandled promise
+//     // rejection, the promise is provided as a third argument
+//     // you can turn off failing the test in this case
+//     if (promise) {
+//       return false
+//     }
+//     // we still want to ensure there are no other unexpected
+//     // errors, so we let them fail the test
+// })
 
 Cypress.Commands.add('loginAdminPanel', (username, password) => {
   cy.get('@allData').then((vars) => {
@@ -106,17 +106,3 @@ Cypress.Commands.add('fillContactForm', (firstName, email, phone, subject, descr
     cy.get(vars.contactFormButton).click()
   })
 })
-let response
-Cypress.Commands.add('commonRequest', (methodName, link) => {
-  cy.fixture('api-testing.json').then(commonRequest => {
-    cy.request({
-      method: methodName,
-      url: link,
-      headers: commonRequest.request.headers,
-      body: commonRequest.request.body
-    }).then((res) => {
-      cy.wrap(res).as('response')
-        //windows.response = res
-    });
-  })
-});
