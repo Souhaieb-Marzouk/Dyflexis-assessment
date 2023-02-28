@@ -49,4 +49,5 @@ Then, the test scripts will be displayed, and all you need to do is to select wh
 
 And then the execution will start immediately:
 ![image](https://user-images.githubusercontent.com/9935463/221968249-751283d6-d197-4f53-9a4e-fb9cdac866c4.png)
+![image](https://user-images.githubusercontent.com/9935463/221970691-ff4b4c42-a4a2-4f2b-9bc8-c090673ac35c.png)
 
