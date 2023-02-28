@@ -6,7 +6,7 @@
         "Accept": "application/json"
     },
 
-    
+
     "tokenMethod": "POST",
     "tokenHeader": {
       "body": {
@@ -65,8 +65,8 @@
     "partialUpdateMethod": "PATCH",
     "partialUpdateHeader": {
       "body": {
-        "username": "admin",
-        "password": "password123"
+        "firstname": "Test10",
+        "lastname": "API10"
       }
     },
     "partialUpdateResponse": {
@@ -76,11 +76,5 @@
 
 
     "DeleteMethod": "DELETE",
-    "DeleteHeader": {
-      "body": {
-        "username": "admin",
-        "password": "password123"
-      }
-    },
     "DeleteResponse": 201
 }
