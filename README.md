@@ -2,8 +2,25 @@
 ## Assessment Description:
 ### UI Testing Assignment:
    - The purpose is to develop some test scripts to cover the different functionalities of the following website: [Automation Testing](https://automationintesting.online/)
+   - These are the following automated tests titles in this project:
+      * Verifies that the homepage loads successfully
+      * Check of the Admin Panel
+      * Check if the login is done successfully
+      * Add another accessible room
+      * Verify that the user cannot book a room if the date is not selected (__I couldn't cover the positive scenario "Correctly booking a room" since there is an issue with the date table in the website, I cannot select the date even manually__)
+      * Should be able to submit the contact form with correct details and receive a confirmation message
+      * Verify if the submit form is sent correctly
+      * Verifies that an error message is displayed when the user submits an empty Contact Name
+      
 ### API Testing Assignment:
    - The purpose is to develop some test scripts to cover the different methods interacting with the following API: [Restful Booker](https://restful-booker.herokuapp.com/apidoc/index.html)
+   - These are the following automated tests titles in this project:
+      * Create a token
+      * Get bookings
+      * Create a booking
+      * Update a booking
+      * Partially update bookings
+      * Delete a booking
 
 ## Installation:
 - This project was developed using Visual Studio.
